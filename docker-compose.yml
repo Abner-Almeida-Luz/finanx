@@ -1,0 +1,27 @@
+services:
+  postgres:
+    image: postgres:18
+    environment:
+      POSTGRES_DB: finanx
+      POSTGRES_USER: finanx
+      POSTGRES_PASSWORD: finanx_dev_password
+    ports:
+      - '15432:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql
+
+  backend:
+    build: ./backend
+    ports:
+      - '8080:8080'
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/finanx
+      SPRING_DATASOURCE_USERNAME: finanx
+      SPRING_DATASOURCE_PASSWORD: finanx_dev_password
+      MANAGEMENT_ENDPOINTS_WEB_CORS_ALLOWED_ORIGINS: http://localhost:5173,http://localhost:3000
+      MANAGEMENT_ENDPOINTS_WEB_CORS_ALLOWED_METHODS: GET,POST,OPTIONS
+    depends_on:
+      - postgres
+
+volumes:
+  postgres_data:
